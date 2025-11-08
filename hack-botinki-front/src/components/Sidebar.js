@@ -23,12 +23,14 @@ function Sidebar() {
         color: "#fff",
         display: "flex",
         flexDirection: "column",
+        borderRadius: "0 8px 8px 0",
+        height: "100%"
       }}
     >
       <h2 style={{ marginBottom: "20px", color: "#61dafb" }}>Мой сайт</h2>
-      <Link to="/" style={linkStyle("/")}>🏠</Link>
-      <Link to="/page1" style={linkStyle("/page1")}>📄</Link>
-      <Link to="/page2" style={linkStyle("/page2")}>⚙️</Link>
+      <Link to="/" style={linkStyle("/")}>🏠 Home</Link>
+      <Link to="/page1" style={linkStyle("/page1")}>📄 Page1</Link>
+      <Link to="/page2" style={linkStyle("/page2")}>⚙️ Page2</Link>
     </div>
   );
 }

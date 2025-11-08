@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.hack.botinki.demo.entity.User;
-import com.hack.botinki.demo.exception.TaskNotFoundException;
 import com.hack.botinki.demo.exception.UserNotFoundException;
 import com.hack.botinki.demo.repository.UserRepository;
 
