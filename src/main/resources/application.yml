@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://db:24241/time-manage-db
+    url: jdbc:postgresql://db:5432/time_manage_db
     username: postgres
     password: botinki
     driver-class-name: org.postgresql.Driver

@@ -3,14 +3,14 @@ version: '3.8'
 services:
   db:
     image: postgres:16
-    container_name: time-manage-db
+    container_name: time_manage_db
     restart: always
     environment:
-      POSTGRES_DB: time-manage-db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: time_manage_db
+      POSTGRES_USER: pupuser
+      POSTGRES_PASSWORD: botinki
     ports:
-      - "24241:24241"
+      - "5432:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
 
@@ -23,8 +23,8 @@ services:
     ports:
       - "25251:25251"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:24241/time-manage-db
-      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/time_manage_db
+      SPRING_DATASOURCE_USERNAME: pupuser
       SPRING_DATASOURCE_PASSWORD: botinki
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
 
