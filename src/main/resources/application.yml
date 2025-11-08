@@ -13,6 +13,15 @@ spring:
       hibernate:
         format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
-
+				
+		ai:
+		    #These parameters apply when using the spring-ai-azure-openai-spring-boot-starter dependency:
+		    azure:
+		      openai:
+		        api-key: "the-api-key"
+		        endpoint: "https://the-url/"
+		        chat:
+		          options:
+		             deployment-name: "gpt-4o"
 server:
   port: 25251
