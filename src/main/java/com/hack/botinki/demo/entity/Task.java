@@ -1,6 +1,6 @@
 package com.hack.botinki.demo.entity;
 
-import java.sql.Date;
+import java.time.LocalDate;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -27,7 +27,7 @@ public class Task {
     private String name;
 
     @Column(nullable = false)
-    private Date deadline;
+    private LocalDate deadline;
 
     @Column(nullable = false)
     private Integer priority;
@@ -38,5 +38,20 @@ public class Task {
     @ManyToOne
     @JoinColumn(name="user_id")
     private User user;
+
+	public Long getId() {
+		// TODO Auto-generated method stub
+		return id;
+	}
+	
+	public LocalDate getData() {
+		// TODO Auto-generated method stub
+		return deadline;
+	}
+	
+	public Integer getComplexity() {
+		// TODO Auto-generated method stub
+		return complexity;
+	}
     
 }
