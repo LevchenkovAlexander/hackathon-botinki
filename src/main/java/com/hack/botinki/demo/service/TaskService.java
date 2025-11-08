@@ -26,6 +26,9 @@ public class TaskService {
         taskRepository.save(task);
     }
 
+    public void removeTask(Long id) {
+        taskRepository.deleteById(id);
+    }
     public List<Task> getTasksByUserId(Long userId){
         log.info("listed all tasks for user " + userId);
         return taskRepository.findByUserId(userId);
@@ -35,6 +38,7 @@ public class TaskService {
         return taskRepository.findById(id)
                 .orElseThrow(() -> new TaskNotFoundException(id)); 
     }
+
 
 
 }

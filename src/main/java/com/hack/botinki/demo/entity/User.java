@@ -21,6 +21,9 @@ public class User {
     @Column(nullable = false, unique = true)
     private String username;
 
+    @Column(nullable = false)
+    private Integer freeTime;
+
     @OneToMany(mappedBy = "user")
     private List<Task> tasks;
     
