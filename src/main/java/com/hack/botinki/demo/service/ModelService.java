@@ -47,7 +47,7 @@ public class ModelService {
 	
 	public int[] execute(Long id) {
 		List<Task> tasks = taskService.getTasksByUserId(id);
-		HashMap<Long, double> priorityByID = new HashMap<>();
+		HashMap<Long, Double> priorityByID = new HashMap<>();
 		for (Task task : tasks) {
 			priority = predict(task);
 		}
@@ -56,6 +56,7 @@ public class ModelService {
 	
 	private int predict(Task task) {
 		ModelEvaluator<?> evaluator = this.evaluator;
+		task.getId();
 	
 	}
 	

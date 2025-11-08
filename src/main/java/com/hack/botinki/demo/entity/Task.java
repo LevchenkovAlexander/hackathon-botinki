@@ -1,6 +1,6 @@
 package com.hack.botinki.demo.entity;
 
-import java.sql.Date;
+import java.time.LocalDate;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -27,7 +27,7 @@ public class Task {
     private String name;
 
     @Column(nullable = false)
-    private Date deadline;
+    private LocalDate deadline;
 
     @Column(nullable = false)
     private Integer priority;
