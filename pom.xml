@@ -79,6 +79,18 @@
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
+        
+		<dependency>
+		    <groupId>org.jpmml</groupId>
+		    <artifactId>pmml-model</artifactId>
+		    <version>1.7.5</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.jpmml</groupId>
+		    <artifactId>pmml-evaluator</artifactId>
+		    <version>1.7.5</version>
+		</dependency>
 
 	</dependencies>
 
