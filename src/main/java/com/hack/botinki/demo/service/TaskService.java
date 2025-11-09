@@ -34,7 +34,7 @@ public class TaskService {
         return taskRepository.findByUserId(userId);
     }
 
-    public Task getTask (Long id) {
+    public Task getTask(Long id) {
         return taskRepository.findById(id)
                 .orElseThrow(() -> new TaskNotFoundException(id)); 
     }

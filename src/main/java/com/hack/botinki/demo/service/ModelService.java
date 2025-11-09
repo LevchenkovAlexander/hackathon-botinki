@@ -10,18 +10,12 @@ import java.time.temporal.ChronoUnit;
 import com.hack.botinki.demo.entity.Task;
 import com.hack.botinki.demo.entity.User;
 
-import org.jpmml.evaluator.InputField;
-import org.jpmml.evaluator.FieldValue;
-
 import jakarta.xml.bind.JAXBException;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,7 +33,11 @@ public class ModelService {
 	
 	public ModelService(TaskService taskService, UserService userService) {
 		 this.taskService = taskService;
+<<<<<<< HEAD
 		 this.userService = userService;	
+=======
+		 this.userService = userService;
+>>>>>>> 689626ebc94f1b62cb8643021c3803dff68bc9cb
 		 PMML pmml;
 		 try {
 			pmml = PMMLUtil.unmarshal(new FileInputStream(new File("resources/model.pmml")));
