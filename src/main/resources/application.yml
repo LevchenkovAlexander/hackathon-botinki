@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://db:5432/time_manage_db
+    url: jdbc:postgresql://db:24241/time-manage-db
     username: postgres
     password: botinki
     driver-class-name: org.postgresql.Driver
@@ -12,16 +12,6 @@ spring:
     properties:
       hibernate:
         format_sql: true
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-				
-		ai:
-		    #These parameters apply when using the spring-ai-azure-openai-spring-boot-starter dependency:
-		    azure:
-		      openai:
-		        api-key: "the-api-key"
-		        endpoint: "https://the-url/"
-		        chat:
-		          options:
-		             deployment-name: "gpt-4o"
+        dialect: org.hibernate.dialect.PostgreSQLDialect		
 server:
   port: 25251

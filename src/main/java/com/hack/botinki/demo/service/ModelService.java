@@ -37,8 +37,9 @@ public class ModelService {
 	private final UserService userService;
 	private ModelEvaluator<?> evaluator;
 	
-	public ModelService(TaskService taskService) {
+	public ModelService(TaskService taskService, UserService userService) {
 		 this.taskService = taskService;
+		 this.userService = userService;	
 		 PMML pmml;
 		 try {
 			pmml = PMMLUtil.unmarshal(new FileInputStream(new File("resources/model.pmml")));
@@ -51,7 +52,8 @@ public class ModelService {
 		 } catch (FileNotFoundException | ParserConfigurationException | SAXException | JAXBException e) {
 			///здесь тож
 			e.printStackTrace();
-		 }		
+		 }
+		 	
 	}
 	
 	
