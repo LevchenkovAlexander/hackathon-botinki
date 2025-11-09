@@ -2,6 +2,7 @@ import { DemoResponse } from "@shared/api";
 import { useEffect, useState } from "react";
 import DatePicker from "../components/DatePicker";
 import { Task, GenerateOrderRequest, GenerateOrderResponse, SubmitTaskResponse } from "@shared/api";
+import { postTask, postFreeHours, postResult, generateOrderApi } from "../lib/api";
 
 const STORAGE_KEY = "mobile_task_app_v1";
 
@@ -58,21 +59,16 @@ export default function Index() {
 
   const generateOrder = async () => {
     if (animationStage !== 'idle') return;
-    // start out animation
     setAnimationStage('out');
-    // wait for out animation to finish before fetching
     setTimeout(async () => {
       const body: GenerateOrderRequest = { tasks, freeHours: typeof freeHours === "number" ? freeHours : undefined };
       try {
-        const res = await fetch("/api/generate-order", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+        const res = await generateOrderApi(body);
         const data = (await res.json()) as GenerateOrderResponse;
         if (data?.orderedTasks) {
           setOrderedTasks(data.orderedTasks);
-          // Replace current tasks with generated order
           setTasks(data.orderedTasks);
-          // animate in
           setAnimationStage('in');
-          // reset to idle after animation
           setTimeout(() => setAnimationStage('idle'), 350);
         } else {
           setAnimationStage('idle');
@@ -86,10 +82,8 @@ export default function Index() {
 
   const submitTask = async (task: Task) => {
     try {
-      const res = await fetch("/api/submit-task", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ task }) });
-      const data = (await res.json()) as SubmitTaskResponse;
+      const data = await postTask(task);
       if (data?.ok) {
-        // If server returned id, update local task id
         if (data.taskId) {
           setTasks((prev) => prev.map((t) => (t === task ? { ...t, id: data.taskId } : t)));
         }
@@ -102,26 +96,34 @@ export default function Index() {
   const saveFreeHours = async () => {
     if (freeHours === "") return;
     const hours = typeof freeHours === "number" ? freeHours : Number(freeHours);
-    // persist locally
+    if (!Number.isInteger(hours) || hours < 1 || hours > 24) return;
     setSavedFreeHours(hours);
-    // send to server as a submitted task
-    submitTask({ id: `${Date.now()}`, name: `Free hours: ${hours}`, hours });
-    // clear input
+    try {
+      await postFreeHours(hours);
+    } catch (e) {
+      console.error(e);
+      // fallback to submitTask
+      await submitTask({ id: `${Date.now()}`, name: `Free hours: ${hours}`, hours });
+    }
     setFreeHours("");
   };
 
-  const addTask = () => {
+  const addTask = async () => {
+    const complexity = typeof newComplexity === "number" ? newComplexity : Number(newComplexity);
+    if (!newName) return;
+    if (!(Number.isInteger(complexity) && complexity > 0)) return;
+
     const t: Task = {
       id: `${Date.now()}`,
-      name: newName || "Новая задача",
+      name: newName,
       deadline: newDeadline || undefined,
-      complexityHours: typeof newComplexity === "number" ? newComplexity : undefined,
+      complexityHours: complexity,
     };
     setTasks((p) => [...p, t]);
     setNewName("");
     setNewDeadline("");
     setNewComplexity("");
-    submitTask(t);
+    await submitTask(t);
   };
 
   const updateTaskField = (index: number, partial: Partial<Task>) => {
@@ -132,10 +134,18 @@ export default function Index() {
     });
   };
 
-  const submitResult = () => {
-    const t: Task = { id: `${Date.now()}`, number: resultNumber, percent: typeof resultPercent === "number" ? resultPercent : undefined };
-    submitTask(t);
-    // reset
+  const submitResult = async () => {
+    const num = Number(resultNumber);
+    const percent = typeof resultPercent === "number" ? resultPercent : Number(resultPercent);
+    if (!Number.isInteger(num) || num < 1) return;
+    if (!Number.isInteger(percent) || percent < 0 || percent > 100) return;
+    const payload = { id: `${Date.now()}`, number: num, percent };
+    try {
+      await postResult(payload);
+    } catch (e) {
+      console.error(e);
+      await submitTask(payload as any);
+    }
     setResultNumber("");
     setResultPercent("");
   };
@@ -197,12 +207,24 @@ export default function Index() {
             }}
           >
             <ol className="text-left list-inside">
-              {tasks.map((t, i) => (
-                <li key={t.id ?? i} className="py-1 text-base sm:text-lg" style={{ display: "flex", marginRight: "auto", flexDirection: "row", padding: "6px 0" }}>
-                  <div style={{ fontFamily: "Roboto, Inter, system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial", width: 20 }}>{i + 1}</div>
-                  <div style={{ marginLeft: 8, alignSelf: "center", fontFamily: "Roboto, Inter, system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial", wordBreak: 'break-word', color: '#2b1f1f' }}>{t.name}</div>
-                </li>
-              ))}
+              {orderedTasks && orderedTasks.length > 0 ? (
+                orderedTasks.slice(0, 3).map((t, i) => {
+                  const title = t.name || 'Без н��звания';
+                  const dl = t.deadline || '-';
+                  const complexity = (t as any).complexity || (typeof t.complexityHours === 'number' ? String(t.complexityHours) : (typeof t.hours === 'number' ? String(t.hours) : '-'));
+                  return (
+                    <li key={t.id ?? i} className="py-2 text-base sm:text-lg" style={{ display: "flex", marginRight: "auto", flexDirection: "row", padding: "6px 0", alignItems: 'flex-start' }}>
+                      <div style={{ fontFamily: "Roboto, Inter, system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial", width: 24, fontWeight: 600 }}>{i + 1}</div>
+                      <div style={{ marginLeft: 8, alignSelf: "center", fontFamily: "Roboto, Inter, system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial", wordBreak: 'break-word', color: '#2b1f1f' }}>
+                        <div style={{ fontWeight: 600 }}>{title}</div>
+                        <div style={{ fontSize: 12, color: '#6b5a57', marginTop: 4 }}>{`Дедлайн: ${dl} • Сложность: ${complexity}`}</div>
+                      </div>
+                    </li>
+                  );
+                })
+              ) : (
+                <div style={{ padding: 12, color: '#6b5a57' }}>пока тут пусто</div>
+              )}
             </ol>
           </div>
 
@@ -221,7 +243,7 @@ export default function Index() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
           <div
             className={`${roundedBox} p-4`}
-            style={{ border: "1px solid rgba(75,45,36,0.06)", borderRadius: "30px", overflow: "hidden", backgroundColor: "#ffffff", padding: "16px", boxShadow: '0 12px 30px rgba(0,0,0,0.08)' }}
+            style={{ border: "1px solid rgba(75,45,36,0.06)", borderRadius: "30px", overflow: "hidden", backgroundColor: "#ffffff", padding: "16px", boxShadow: 'rgba(0, 0, 0, 0.08) 0px 12px 30px 0px' }}
           >
             <div style={{ font: '400 18px Roboto, Inter, system-ui, -apple-system, "Segoe UI", "Helvetica Neue", Arial ', marginBottom: 8, textAlign: "center", color: '#2b1f1f' }}>Свободные часы сегодня</div>
             <div style={{ display: "flex", alignItems: "center", flexDirection: "column" }}>
@@ -230,7 +252,17 @@ export default function Index() {
                 type="number"
                 placeholder="Количество часов..."
                 value={freeHours as any}
-                onChange={(e) => setFreeHours(e.target.value === "" ? "" : Number(e.target.value))}
+                min={1}
+                max={24}
+                step={1}
+                onChange={(e) => {
+                  const v = e.target.value;
+                  if (v === "") return setFreeHours("");
+                  const n = Number(v);
+                  if (!Number.isInteger(n)) return;
+                  if (n < 1 || n > 24) return;
+                  setFreeHours(n);
+                }}
                 style={{
                   borderRadius: 9999,
                   display: "block",
@@ -268,15 +300,24 @@ export default function Index() {
 
           <div
             className={`${roundedBox} p-4`}
-            style={{ border: "1px solid rgba(75,45,36,0.06)", borderRadius: "30px", overflow: "hidden", backgroundColor: "#ffffff", padding: "16px", width: "100%", boxShadow: '0 12px 30px rgba(0,0,0,0.08)' }}
+            style={{ border: "1px solid rgba(75,45,36,0.06)", borderRadius: "30px", overflow: "hidden", backgroundColor: "#ffffff", padding: "16px", width: "100%", boxShadow: 'rgba(0, 0, 0, 0.08) 0px 12px 30px 0px' }}
           >
             <div style={{ font: '400 18px Roboto, Inter, system-ui, -apple-system, "Segoe UI", "Helvetica Neue", Arial ', marginBottom: 8, textAlign: "center", color: '#2b1f1f' }}>Результат работы</div>
             <div style={{ display: "flex", alignItems: "center", flexDirection: "column", gap: 8 }}>
               <input
                 aria-label="Номер задания"
+                type="number"
+                min={1}
+                step={1}
                 placeholder="Номер задания"
                 value={resultNumber}
-                onChange={(e) => setResultNumber(e.target.value)}
+                onChange={(e) => {
+                  const v = e.target.value;
+                  if (v === "") return setResultNumber("");
+                  const n = Number(v);
+                  if (!Number.isInteger(n) || n < 1) return;
+                  setResultNumber(String(n));
+                }}
                 style={{
                   borderRadius: 9999,
                   display: "block",
@@ -293,8 +334,17 @@ export default function Index() {
                 aria-label="На сколько процентов выполнено"
                 type="number"
                 placeholder="Процент задачи"
+                min={0}
+                max={100}
+                step={1}
                 value={resultPercent as any}
-                onChange={(e) => setResultPercent(e.target.value === "" ? "" : Number(e.target.value))}
+                onChange={(e) => {
+                  const v = e.target.value;
+                  if (v === "") return setResultPercent("");
+                  const n = Number(v);
+                  if (!Number.isInteger(n) || n < 0 || n > 100) return;
+                  setResultPercent(n);
+                }}
                 style={{
                   borderRadius: 9999,
                   display: "block",
@@ -383,8 +433,16 @@ export default function Index() {
                 aria-label="Сложность"
                 placeholder="Часы"
                 type="number"
+                min={1}
+                step={1}
                 value={newComplexity as any}
-                onChange={(e) => setNewComplexity(e.target.value === "" ? "" : Number(e.target.value))}
+                onChange={(e) => {
+                  const v = e.target.value;
+                  if (v === "") return setNewComplexity("");
+                  const n = Number(v);
+                  if (!Number.isInteger(n) || n < 1) return;
+                  setNewComplexity(n);
+                }}
                 style={{
                   border: "1px solid rgba(75,45,36,0.06)",
                   borderRadius: 9999,
