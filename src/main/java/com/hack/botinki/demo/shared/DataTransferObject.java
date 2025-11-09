@@ -67,17 +67,6 @@ public class DataTransferObject {
 		}
 	}
 
-	@Data
-	public class SubmitTaskRequest {
-	    private TaskTO task;
-	    private Long Uid;
-	    public TaskTO getTask() {
-			return task;
-		}
-	    public Long getUid() {
-			return Uid;
-		}
-	}
 
 	@Data
 	public class ResultRequest {
@@ -86,9 +75,4 @@ public class DataTransferObject {
 	    private Integer percent;
 	}
 	
-	@Data
-	public class FreeHoursRequest {
-		private Long Uid;
-		private Integer hours;
-	}
 }

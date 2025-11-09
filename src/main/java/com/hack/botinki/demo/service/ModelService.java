@@ -88,6 +88,7 @@ public class ModelService {
 	    }
 	    
 	    Object prediction = results.get(targetFields.get(0).getName());
+	    task.setPriority((Double) prediction);
 	    return (Double) prediction;
     }
 	

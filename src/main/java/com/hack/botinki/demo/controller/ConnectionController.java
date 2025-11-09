@@ -40,7 +40,7 @@ public class ConnectionController {
             List<TaskTO> optimizedTasks = new ArrayList<>();
             for (long id : taskIds) {
             	Task task = taskService.getTask(Uid);
-            	TaskTO taskToList = new TaskTO(Uid, task.getName(), task.getDate().toString(), task.getComplexity());
+            	TaskTO taskToList = new TaskTO(Uid, task.getName(), task.get().toString(), task.getEstimatedComplexity());
             	optimizedTasks.add(taskToList);
             }
             GenerateOrderResponse response = new GenerateOrderResponse();
@@ -59,7 +59,7 @@ public class ConnectionController {
         try {
         	Long Uid = taskRequest.getUid();
         	Task taskToDB = new Task();
-        	taskToDB.setName(taskRequest.getName()).setDeadline(taskRequest.getDeadline()).setComplexity(taskRequest.getComplexityHours()).setUid();
+        	taskToDB.setName(taskRequest.getName()).setDeadline(taskRequest.getDeadline()).setComplexity(taskRequest.getComplexityHours()).setUid(Uid);
             taskService.addTask(taskToDB);
          
         } catch (Exception e) {
