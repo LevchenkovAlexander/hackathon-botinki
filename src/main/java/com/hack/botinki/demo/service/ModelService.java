@@ -10,6 +10,7 @@ import java.time.temporal.ChronoUnit;
 import com.hack.botinki.demo.entity.Task;
 import com.hack.botinki.demo.entity.User;
 
+import jakarta.xml.bind.JAXBException;
 
 import java.io.File;
 import java.io.FileInputStream;
