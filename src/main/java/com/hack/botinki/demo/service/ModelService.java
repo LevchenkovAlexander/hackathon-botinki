@@ -70,7 +70,7 @@ public class ModelService {
 	private Double predict(Task task, Integer freeHours) {
 		ModelEvaluator<?> evaluator = this.evaluator;
 		
-		LocalDate deadline = task.getData();
+		LocalDate deadline = task.getDate();
 		LocalDate now = LocalDate.now();
 		long dud = ChronoUnit.DAYS.between(now, deadline);
 		

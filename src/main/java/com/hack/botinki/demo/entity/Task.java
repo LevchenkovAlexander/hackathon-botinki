@@ -37,21 +37,6 @@ public class Task {
 
     @ManyToOne
     @JoinColumn(name="user_id")
-    private User user;
-
-	public Long getId() {
-		// TODO Auto-generated method stub
-		return id;
-	}
-	
-	public LocalDate getData() {
-		// TODO Auto-generated method stub
-		return deadline;
-	}
-	
-	public Integer getComplexity() {
-		// TODO Auto-generated method stub
-		return complexity;
-	}
+    private User user;	
     
 }
