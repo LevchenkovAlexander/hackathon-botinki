@@ -74,7 +74,7 @@ public class ConnectionController {
         	Long Uid = freeHoursRequest.getUid();
         	Integer freeHours = freeHoursRequest.getFreeHours();
             User user = userService.getUser(Uid);
-            User.setFreeHours(freeHours);
+            user.setFreeHours(freeHours);
         } catch (Exception e) {
         }
     }
