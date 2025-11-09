@@ -80,13 +80,19 @@
             <optional>true</optional>
         </dependency>
         
+				<!-- https://mvnrepository.com/artifact/org.jpmml/pmml-model -->
 		<dependency>
 		    <groupId>org.jpmml</groupId>
-		    <artifactId>jpmml</artifactId>
-		    <version>1.0.22</version>
-		    <type>pom</type>
+		    <artifactId>pmml-model</artifactId>
+		    <version>1.7.5</version>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/org.jpmml/pmml-evaluator -->
+		<dependency>
+		    <groupId>org.jpmml</groupId>
+		    <artifactId>pmml-evaluator</artifactId>
+		    <version>1.7.5</version>
+		</dependency>
 	</dependencies>
 
 	<build>

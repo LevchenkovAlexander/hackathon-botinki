@@ -10,7 +10,6 @@ import java.time.temporal.ChronoUnit;
 import com.hack.botinki.demo.entity.Task;
 import com.hack.botinki.demo.entity.User;
 
-import jakarta.xml.bind.JAXBException;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -33,11 +32,9 @@ public class ModelService {
 	
 	public ModelService(TaskService taskService, UserService userService) {
 		 this.taskService = taskService;
-<<<<<<< HEAD
+
 		 this.userService = userService;	
-=======
-		 this.userService = userService;
->>>>>>> 689626ebc94f1b62cb8643021c3803dff68bc9cb
+
 		 PMML pmml;
 		 try {
 			pmml = PMMLUtil.unmarshal(new FileInputStream(new File("resources/model.pmml")));
