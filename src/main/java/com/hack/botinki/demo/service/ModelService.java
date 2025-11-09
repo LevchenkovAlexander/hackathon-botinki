@@ -76,7 +76,7 @@ public class ModelService {
 		
 		Map<String, Object>	data = new HashMap<>();
 		data.put("days_until_deadline", dud);
-		data.put("task_complexity", task.getComplexity());
+		data.put("task_est_hours", task.getEstimatedHours());
 		data.put("free_hours", freeHours);
 		
 	    

@@ -24,6 +24,7 @@ public class TaskService {
 
     public void addTask(Task task) {
         taskRepository.save(task);
+       
     }
 
     public void removeTask(Long id) {

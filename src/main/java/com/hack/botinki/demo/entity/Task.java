@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -30,13 +31,20 @@ public class Task {
     private LocalDate deadline;
 
     @Column(nullable = false)
-    private Integer priority;
+    private Double priority;
 
     @Column(nullable = false)
     private Integer complexity;
 
+    @Column(nullable = false)
+    private Double estimatedHours;
+
+    @Column(nullable = false)
+    private Long userId;
+
     @ManyToOne
     @JoinColumn(name="user_id")
-    private User user;	
+    private User user;
+
     
 }

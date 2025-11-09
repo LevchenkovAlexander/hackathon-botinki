@@ -30,9 +30,5 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<Task> tasks;
-    
-    public Integer getFreeTime() {
-    	return freeTime;
-    }
-    
+
 }

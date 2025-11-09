@@ -5,12 +5,14 @@ import com.hack.botinki.demo.entity.User;
 import com.hack.botinki.demo.service.ModelService;
 import com.hack.botinki.demo.service.TaskService;
 import com.hack.botinki.demo.service.UserService;
-import com.hack.botinki.demo.shared.DataTransferObject.FreeHoursRequest;
-import com.hack.botinki.demo.shared.DataTransferObject.GenerateOrderRequest;
-import com.hack.botinki.demo.shared.DataTransferObject.GenerateOrderResponse;
-import com.hack.botinki.demo.shared.DataTransferObject.SubmitTaskRequest;
-import com.hack.botinki.demo.shared.DataTransferObject.TaskTO;
+import com.hack.botinki.demo.shared.FreeHoursRequest;
+import com.hack.botinki.demo.shared.GenerateOrderRequest;
+import com.hack.botinki.demo.shared.GenerateOrderResponse;
+import com.hack.botinki.demo.shared.ResultRequest;
+import com.hack.botinki.demo.shared.SubmitTaskRequest;
+import com.hack.botinki.demo.shared.TaskTO;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.Slf4j;
@@ -39,8 +41,8 @@ public class ConnectionController {
             long[] taskIds = modelService.execute(Uid);
             List<TaskTO> optimizedTasks = new ArrayList<>();
             for (long id : taskIds) {
-            	Task task = taskService.getTask(Uid);
-            	TaskTO taskToList = new TaskTO(Uid, task.getName(), task.get().toString(), task.getEstimatedComplexity());
+            	Task task = taskService.getTask(id);
+            	TaskTO taskToList = new TaskTO(Uid, task.getName(), task.getDeadline().toString(), task.getComplexity());
             	optimizedTasks.add(taskToList);
             }
             GenerateOrderResponse response = new GenerateOrderResponse();
@@ -59,11 +61,15 @@ public class ConnectionController {
         try {
         	Long Uid = taskRequest.getUid();
         	Task taskToDB = new Task();
-        	taskToDB.setName(taskRequest.getName()).setDeadline(taskRequest.getDeadline()).setComplexity(taskRequest.getComplexityHours()).setUid(Uid);
+        	taskToDB.setName(taskRequest.getName());
+            taskToDB.setDeadline(taskRequest.getDeadline());
+            taskToDB.setComplexity(taskRequest.getComplexityHours());
+            taskToDB.setUserId(Uid);
             taskService.addTask(taskToDB);
          
+            return ResponseEntity.status(HttpStatus.CREATED).build();
         } catch (Exception e) {
-
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
@@ -74,8 +80,10 @@ public class ConnectionController {
         	Long Uid = freeHoursRequest.getUid();
         	Integer freeHours = freeHoursRequest.getFreeHours();
             User user = userService.getUser(Uid);
-            user.setFreeHours(freeHours);
+            user.setFreeTime(freeHours);
+            return ResponseEntity.status(HttpStatus.CREATED).build();
         } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
@@ -94,3 +102,4 @@ public class ConnectionController {
             return ResponseEntity.internalServerError().build();
         }
     }
+}
