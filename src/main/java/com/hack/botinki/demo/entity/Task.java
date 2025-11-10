@@ -1,14 +1,17 @@
 package com.hack.botinki.demo.entity;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 import lombok.Getter;
@@ -39,12 +42,9 @@ public class Task {
     @Column(nullable = false)
     private Double estimatedHours;
 
-    @Column(nullable = false)
-    private Long userId;
+    // Связь через proxy таблицу
+    @OneToOne(mappedBy = "task", cascade = CascadeType.ALL)
+    private Proxy proxy;
 
-    @ManyToOne
-    @JoinColumn(name="user_id")
-    private User user;
-
-    
+   
 }

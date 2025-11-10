@@ -59,26 +59,18 @@
 		<!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
 		<dependency>
 		    <groupId>org.projectlombok</groupId>
-		    <artifactId>lombok</artifactId>
-		    <version>1.18.42</version>
+            <artifactId>lombok</artifactId>
+            <version>1.18.42</version>
+            <scope>provided</scope>
 		</dependency>
 
-		<dependency>  
-			<groupId>jakarta.persistence</groupId>  
-			<artifactId>jakarta.persistence-api</artifactId>  
-			<version>3.2.0</version>  
-		</dependency>
 
 		<dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
         </dependency>
 
-		<dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <optional>true</optional>
-        </dependency>
+
         
 				<!-- https://mvnrepository.com/artifact/org.jpmml/pmml-model -->
 		<dependency>
@@ -97,11 +89,38 @@
 
 	<build>
 		<plugins>
+
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-				
-			</plugin>
+				<version>3.5.7</version> <!-- та же версия, что и у spring-boot-starter-parent -->
+				<executions>
+					<execution>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+					</execution>
+				</executions>
+        	</plugin>
+
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.13.0</version> <!-- или новее -->
+				<configuration>
+					<source>21</source> 
+					<target>21</target>
+					<annotationProcessorPaths>
+						<path>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+							<version>1.18.42</version> <!-- актуальная на ноябрь 2025 -->
+						</path>
+					</annotationProcessorPaths>
+				</configuration>
+        	</plugin>
+
 		</plugins>
 	</build>
 

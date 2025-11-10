@@ -25,15 +25,12 @@ public class TaskService {
     public void addTask(Task task) {
         taskRepository.save(task);    
     }
-    
+
     
     public void removeTask(Long id) {
         taskRepository.deleteById(id);
     }
-    public List<Task> getTasksByUserId(Long userId){
-        log.info("listed all tasks for user " + userId);
-        return taskRepository.findByUserId(userId);
-    }
+    
 
     public Task getTask(Long id) {
         return taskRepository.findById(id)

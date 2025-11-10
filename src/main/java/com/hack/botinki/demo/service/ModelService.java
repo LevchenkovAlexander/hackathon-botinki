@@ -29,11 +29,13 @@ public class ModelService {
 	
 	private final TaskService taskService;
 	private final UserService userService;
+	private final ProxyService proxyService;
+
 	private ModelEvaluator<?> evaluator;
 	
-	public ModelService(TaskService taskService, UserService userService) {
+	public ModelService(TaskService taskService, UserService userService, ProxyService proxyService) {
 		 this.taskService = taskService;
-
+		 this.proxyService = proxyService;
 		 this.userService = userService;	
 
 		 PMML pmml;
@@ -54,7 +56,7 @@ public class ModelService {
 	
 	
 	public long[] execute(Long id) {
-		List<Task> tasks = taskService.getTasksByUserId(id);
+		List<Task> tasks = proxyService.getTasksByUserId(id);
 		
 		User user = userService.getUser(id);
 		Integer freeHours = user.getFreeTime();

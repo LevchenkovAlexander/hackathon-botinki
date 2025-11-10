@@ -3,6 +3,7 @@ package com.hack.botinki.demo.controller;
 import com.hack.botinki.demo.entity.Task;
 import com.hack.botinki.demo.entity.User;
 import com.hack.botinki.demo.service.ModelService;
+import com.hack.botinki.demo.service.ProxyService;
 import com.hack.botinki.demo.service.TaskService;
 import com.hack.botinki.demo.service.UserService;
 import com.hack.botinki.demo.shared.FreeHoursRequest;
@@ -24,12 +25,13 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "http://localhost:3000z`") // Для разработки, в продакшене указать конкретный origin
+@CrossOrigin(origins = "http://localhost:3000") // Для разработки, в продакшене указать конкретный origin
 public class ConnectionController {
 
 	private ModelService modelService; 
 	private TaskService taskService; 
 	private UserService userService; 
+    private ProxyService proxyService;
 	
     @PostMapping("/generate-order")
     public ResponseEntity<GenerateOrderResponse> generateOrder(@RequestBody GenerateOrderRequest request) {
@@ -64,8 +66,8 @@ public class ConnectionController {
             taskToDB.setDeadline(taskRequest.getDeadline());
             taskToDB.setEstimatedHours(taskRequest.getEstimatedHours());
             taskToDB.setEstimatedHours(taskRequest.getEstimatedHours());
-            taskToDB.setUserId(Uid);
             taskService.addTask(taskToDB);
+            proxyService.addInstance(Uid, taskToDB.getId());
          
             return ResponseEntity.status(HttpStatus.CREATED).build();
         } catch (Exception e) {

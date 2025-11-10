@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hack.botinki.demo.entity.Task;
+import com.hack.botinki.demo.service.ProxyService;
 import com.hack.botinki.demo.service.TaskService;
 
 @RestController
@@ -16,13 +17,15 @@ import com.hack.botinki.demo.service.TaskService;
 public class UserTaskController {
 
     private final TaskService taskService;
+    private final ProxyService proxyService;
 
-    public UserTaskController(TaskService taskService) {
+    public UserTaskController(TaskService taskService, ProxyService proxyService) {
         this.taskService = taskService;
+        this.proxyService = proxyService;
     }
 
     @GetMapping("/{id}/tasks")
     public List<Task> getTasksByUserId(@PathVariable Long id) {
-        return taskService.getTasksByUserId(id);
+        return proxyService.getTasksByUserId(id);
     }
 }

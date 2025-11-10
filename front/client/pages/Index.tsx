@@ -189,7 +189,7 @@ export default function Index() {
             <ol className="text-left list-inside" style={{ paddingRight: 8 }}>
               {orderedTasks && orderedTasks.length > 0 ? (
                 orderedTasks.map((t, i) => {
-                  const title = t.name || 'Без н��звания';
+                  const title = t.name || 'Без названия';
                   const dl = t.deadline || '-';
                   const complexity = (t as any).complexity || (typeof t.complexityHours === 'number' ? String(t.complexityHours) : (typeof t.hours === 'number' ? String(t.hours) : '-'));
                   return (
@@ -231,7 +231,7 @@ export default function Index() {
               <input
                 aria-label="Количество часов"
                 type="number"
-                placeholder="Количество часов..."
+                placeholder="Часы"
                 value={freeHours as any}
                 min={1}
                 max={24}

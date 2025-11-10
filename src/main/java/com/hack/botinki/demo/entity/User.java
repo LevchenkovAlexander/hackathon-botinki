@@ -1,7 +1,10 @@
 package com.hack.botinki.demo.entity;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -9,8 +12,6 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 
 @Entity
 @Table(name="users")
@@ -19,7 +20,6 @@ import jakarta.persistence.GenerationType;
 public class User {
     
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false, unique = true)
@@ -28,7 +28,9 @@ public class User {
     @Column(nullable = false)
     private Integer freeTime;
 
-    @OneToMany(mappedBy = "user")
-    private List<Task> tasks;
+    // Связь через proxy таблицу
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Proxy> proxies = new ArrayList<>();
+
 
 }
