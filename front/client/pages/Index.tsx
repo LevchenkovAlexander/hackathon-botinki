@@ -24,11 +24,7 @@ function saveState(state: any) {
 export default function Index() {
   const stored = loadState();
 
-  const [tasks, setTasks] = useState<Task[]>(stored.tasks ?? [
-    { id: "1", name: "задача 1" },
-    { id: "2", name: "задача 2" },
-    { id: "3", name: "задача 3" },
-  ]);
+  const [tasks, setTasks] = useState<Task[]>(stored.tasks ?? []);
 
   const [orderedTasks, setOrderedTasks] = useState<Task[]>(stored.orderedTasks ?? []);
 
@@ -199,16 +195,18 @@ export default function Index() {
             }`}
             style={{
               borderRadius: "30px",
-              overflow: "hidden",
+              overflowX: "hidden",
+              overflowY: "auto",
+              maxHeight: "320px",
               marginRight: "2px",
               width: "100%",
               padding: "8px 0 8px 7px",
               border: "1px solid rgba(75,45,36,0.06)",
             }}
           >
-            <ol className="text-left list-inside">
+            <ol className="text-left list-inside" style={{ paddingRight: 8 }}>
               {orderedTasks && orderedTasks.length > 0 ? (
-                orderedTasks.slice(0, 3).map((t, i) => {
+                orderedTasks.map((t, i) => {
                   const title = t.name || 'Без н��звания';
                   const dl = t.deadline || '-';
                   const complexity = (t as any).complexity || (typeof t.complexityHours === 'number' ? String(t.complexityHours) : (typeof t.hours === 'number' ? String(t.hours) : '-'));
@@ -216,14 +214,15 @@ export default function Index() {
                     <li key={t.id ?? i} className="py-2 text-base sm:text-lg" style={{ display: "flex", marginRight: "auto", flexDirection: "row", padding: "6px 0", alignItems: 'flex-start' }}>
                       <div style={{ fontFamily: "Roboto, Inter, system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial", width: 24, fontWeight: 600 }}>{i + 1}</div>
                       <div style={{ marginLeft: 8, alignSelf: "center", fontFamily: "Roboto, Inter, system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial", wordBreak: 'break-word', color: '#2b1f1f' }}>
-                        <div style={{ fontWeight: 600 }}>{title}</div>
-                        <div style={{ fontSize: 12, color: '#6b5a57', marginTop: 4 }}>{`Дедлайн: ${dl} • Сложность: ${complexity}`}</div>
+                        <div style={{ fontWeight: 600, color: '#2b1f1f' }}>{title}</div>
+                        <div style={{ fontSize: 13, color: '#4a2f2b', marginTop: 6, fontWeight: 500 }}>{`Дедлайн: ${dl}`}</div>
+                        <div style={{ fontSize: 13, color: '#4a2f2b', marginTop: 4, fontWeight: 400 }}>{`Сложность: ${complexity}`}</div>
                       </div>
                     </li>
                   );
                 })
               ) : (
-                <div style={{ padding: 12, color: '#6b5a57' }}>пока тут пусто</div>
+                <div style={{ padding: 12, color: '#6b5a57' }}>Пока тут пусто</div>
               )}
             </ol>
           </div>
@@ -407,7 +406,7 @@ export default function Index() {
             </div>
 
             <div className="w-full md:w-1/3 flex flex-col items-center">
-              <div className="mb-2" style={{ fontSize: "16px", fontWeight: "400", lineHeight: "22.5px", marginBottom: "8px", color: '#2b1f1f' }}>Дедлайн</div>
+              <div style={{ fontWeight: '400', lineHeight: '22.5px', marginBottom: '8px' }}><p>Дедлайн</p></div>
               <DatePicker
                 ariaLabel="Дедлайн"
                 value={newDeadline}

@@ -42,7 +42,7 @@ public class ConnectionController {
             List<TaskTO> optimizedTasks = new ArrayList<>();
             for (long id : taskIds) {
             	Task task = taskService.getTask(id);
-            	TaskTO taskToList = new TaskTO(Uid, task.getName(), task.getDeadline().toString(), task.getComplexity());
+            	TaskTO taskToList = new TaskTO(Uid, task.getName(), task.getDeadline().toString(), task.getEstimatedHours());
             	optimizedTasks.add(taskToList);
             }
             GenerateOrderResponse response = new GenerateOrderResponse();
@@ -64,6 +64,7 @@ public class ConnectionController {
         	taskToDB.setName(taskRequest.getName());
             taskToDB.setDeadline(taskRequest.getDeadline());
             taskToDB.setComplexity(taskRequest.getComplexityHours());
+            taskToDB.setEstimatedHours(taskRequest.getComplexityHours());
             taskToDB.setUserId(Uid);
             taskService.addTask(taskToDB);
          
@@ -81,6 +82,7 @@ public class ConnectionController {
         	Integer freeHours = freeHoursRequest.getFreeHours();
             User user = userService.getUser(Uid);
             user.setFreeTime(freeHours);
+            userService.addUser(user);
             return ResponseEntity.status(HttpStatus.CREATED).build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -88,18 +90,26 @@ public class ConnectionController {
     }
 
     @PostMapping("/result")
-    public ResponseEntity<Void> submitResult(@RequestBody ResultRequest result) {
-        log.info("Received result - task {}: {}% completed", 
-                result.getNumber(), result.getPercent());
+    public ResponseEntity<Void> submitResult(@RequestBody ResultRequest request) {
         
         try {
-            // Сохранение результата выполнения задачи
-            saveResult(result);
-            return ResponseEntity.ok().build();
-            
+        	Long Uid = request.getUid();
+            long[] taskIds = modelService.execute(Uid);
+            Long idToChange = taskIds[request.getNumber()-1];
+            Task taskToChange = taskService.getTask(idToChange);
+        	Integer percent = request.getPercent();
+        	if (percent.equals(100)) {
+        		taskService.removeTask(idToChange);
+        	}
+        	else {
+        		double percentd = Double.valueOf(percent);
+        		double complexity = Double.valueOf(taskToChange.getComplexity());
+        		taskToChange.setEstimatedHours(complexity*percentd/100);
+        		taskService.addTask(taskToChange);
+        	}    
+            return ResponseEntity.status(HttpStatus.CREATED).build();
         } catch (Exception e) {
-            log.error("Error saving result", e);
-            return ResponseEntity.internalServerError().build();
+        	return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 }
