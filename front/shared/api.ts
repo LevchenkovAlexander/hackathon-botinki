@@ -11,8 +11,8 @@ export interface DemoResponse {
   message: string;
 }
 
-interface Task {
-    Uid: Long;
+export interface Task {
+    Uid: bigint;
     name: string;
     deadline: string; // в формате "dd.MM.yyyy"
     complexityHours: number;

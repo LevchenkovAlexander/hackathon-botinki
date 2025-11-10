@@ -9,7 +9,6 @@ import com.hack.botinki.demo.shared.FreeHoursRequest;
 import com.hack.botinki.demo.shared.GenerateOrderRequest;
 import com.hack.botinki.demo.shared.GenerateOrderResponse;
 import com.hack.botinki.demo.shared.ResultRequest;
-import com.hack.botinki.demo.shared.SubmitTaskRequest;
 import com.hack.botinki.demo.shared.TaskTO;
 
 import org.springframework.http.HttpStatus;
@@ -19,14 +18,13 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 @Slf4j
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "*") // Для разработки, в продакшене указать конкретный origin
+@CrossOrigin(origins = "http://localhost:3000z`") // Для разработки, в продакшене указать конкретный origin
 public class ConnectionController {
 
 	private ModelService modelService; 
