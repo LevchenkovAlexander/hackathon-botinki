@@ -8,7 +8,4 @@ import lombok.Data;
 public class GenerateOrderRequest {
     private List<TaskTO> tasks;
     private Long Uid;
-    public Long getUid() {
-        return Uid;
-    }
 }

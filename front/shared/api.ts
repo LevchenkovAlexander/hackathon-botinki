@@ -11,14 +11,11 @@ export interface DemoResponse {
   message: string;
 }
 
-export interface Task {
-  id?: string;
-  name?: string;
-  number?: string;
-  hours?: number;
-  percent?: number; // percent completed 0-100
-  deadline?: string; // string date, can be DD:MM:YYYY or ISO
-  complexityHours?: number;
+interface Task {
+    Uid: Long;
+    name: string;
+    deadline: string; // в формате "dd.MM.yyyy"
+    complexityHours: number;
 }
 
 export interface GenerateOrderRequest {

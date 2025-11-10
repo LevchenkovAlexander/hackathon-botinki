@@ -4,22 +4,7 @@ import DatePicker from "../components/DatePicker";
 import { Task, GenerateOrderRequest, GenerateOrderResponse, SubmitTaskResponse } from "@shared/api";
 import { postTask, postFreeHours, postResult, generateOrderApi } from "../lib/api";
 
-const STORAGE_KEY = "mobile_task_app_v1";
-
-function loadState() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return {};
-    return JSON.parse(raw);
-  } catch {
-    return {};
-  }
-}
-function saveState(state: any) {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-  } catch {}
-}
+import { loadState, saveState, setUserId } from "../lib/storage";
 
 export default function Index() {
   const stored = loadState();
@@ -90,18 +75,16 @@ export default function Index() {
   };
 
   const saveFreeHours = async () => {
-    if (freeHours === "") return;
-    const hours = typeof freeHours === "number" ? freeHours : Number(freeHours);
-    if (!Number.isInteger(hours) || hours < 1 || hours > 24) return;
-    setSavedFreeHours(hours);
-    try {
-      await postFreeHours(hours);
-    } catch (e) {
-      console.error(e);
-      // fallback to submitTask
-      await submitTask({ id: `${Date.now()}`, name: `Free hours: ${hours}`, hours });
-    }
-    setFreeHours("");
+      if (freeHours === "") return;
+      const hours = typeof freeHours === "number" ? freeHours : Number(freeHours);
+      if (!Number.isInteger(hours) || hours < 1 || hours > 24) return;
+      setSavedFreeHours(hours);
+      try {
+          await postFreeHours({ freeHours: hours, Uid: userId });
+      } catch (e) {
+          console.error(e);
+      }
+      setFreeHours("");
   };
 
   const addTask = async () => {
@@ -131,19 +114,18 @@ export default function Index() {
   };
 
   const submitResult = async () => {
-    const num = Number(resultNumber);
-    const percent = typeof resultPercent === "number" ? resultPercent : Number(resultPercent);
-    if (!Number.isInteger(num) || num < 1) return;
-    if (!Number.isInteger(percent) || percent < 0 || percent > 100) return;
-    const payload = { id: `${Date.now()}`, number: num, percent };
-    try {
-      await postResult(payload);
-    } catch (e) {
-      console.error(e);
-      await submitTask(payload as any);
-    }
-    setResultNumber("");
-    setResultPercent("");
+      const num = Number(resultNumber);
+      const percent = typeof resultPercent === "number" ? resultPercent : Number(resultPercent);
+      if (!Number.isInteger(num) || num < 1) return;
+      if (!Number.isInteger(percent) || percent < 0 || percent > 100) return;
+      const payload = { Uid: userId, number: num, percent: percent };
+      try {
+          await postResult(payload);
+      } catch (e) {
+          console.error(e);
+      }
+      setResultNumber("");
+      setResultPercent("");
   };
 
   const container = "max-w-md mx-auto p-4 space-y-4";
@@ -222,7 +204,7 @@ export default function Index() {
                   );
                 })
               ) : (
-                <div style={{ padding: 12, color: '#6b5a57' }}>Пока тут пусто</div>
+                <div style={{ padding: 12, color: '#6b5a57' }}>пока тут пусто</div>
               )}
             </ol>
           </div>
