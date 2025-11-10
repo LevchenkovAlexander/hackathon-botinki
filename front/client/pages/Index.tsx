@@ -3,10 +3,19 @@ import { useEffect, useState } from "react";
 import DatePicker from "../components/DatePicker";
 import { Task, GenerateOrderRequest, GenerateOrderResponse, SubmitTaskResponse } from "@shared/api";
 import { postTask, postFreeHours, postResult, generateOrderApi } from "../lib/api";
-
-import { loadState, saveState, setUserId } from "../lib/storage";
+import { loadState, saveState, setUserId, getUserIdFromLaunchParams } from "../lib/storage";
 
 export default function Index() {
+  // Обрабатываем параметры запуска при инициализации
+  useEffect(() => {
+    const launchUserId = getUserIdFromLaunchParams();
+    if (launchUserId) {
+      console.log('Received userId from bot:', launchUserId);
+      // userId автоматически установится через getUserId()
+    }
+  }, []);
+
+  // Загружаем состояние после установки userId
   const stored = loadState();
 
   const [tasks, setTasks] = useState<Task[]>(stored.tasks ?? []);
