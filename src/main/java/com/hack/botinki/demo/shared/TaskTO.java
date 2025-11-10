@@ -12,7 +12,7 @@ public class TaskTO {
     private Long Uid;
     private String name;
     private String deadline;
-    private Integer complexityHours;
+    private Double estimatedHours;
 
     public LocalDate getDeadline() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");

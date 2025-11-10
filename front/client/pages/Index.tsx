@@ -4,31 +4,12 @@ import DatePicker from "../components/DatePicker";
 import { Task, GenerateOrderRequest, GenerateOrderResponse, SubmitTaskResponse } from "@shared/api";
 import { postTask, postFreeHours, postResult, generateOrderApi } from "../lib/api";
 
-const STORAGE_KEY = "mobile_task_app_v1";
-
-function loadState() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return {};
-    return JSON.parse(raw);
-  } catch {
-    return {};
-  }
-}
-function saveState(state: any) {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-  } catch {}
-}
+import { loadState, saveState, setUserId } from "../lib/storage";
 
 export default function Index() {
   const stored = loadState();
 
-  const [tasks, setTasks] = useState<Task[]>(stored.tasks ?? [
-    { id: "1", name: "задача 1" },
-    { id: "2", name: "задача 2" },
-    { id: "3", name: "задача 3" },
-  ]);
+  const [tasks, setTasks] = useState<Task[]>(stored.tasks ?? []);
 
   const [orderedTasks, setOrderedTasks] = useState<Task[]>(stored.orderedTasks ?? []);
 
@@ -94,18 +75,16 @@ export default function Index() {
   };
 
   const saveFreeHours = async () => {
-    if (freeHours === "") return;
-    const hours = typeof freeHours === "number" ? freeHours : Number(freeHours);
-    if (!Number.isInteger(hours) || hours < 1 || hours > 24) return;
-    setSavedFreeHours(hours);
-    try {
-      await postFreeHours(hours);
-    } catch (e) {
-      console.error(e);
-      // fallback to submitTask
-      await submitTask({ id: `${Date.now()}`, name: `Free hours: ${hours}`, hours });
-    }
-    setFreeHours("");
+      if (freeHours === "") return;
+      const hours = typeof freeHours === "number" ? freeHours : Number(freeHours);
+      if (!Number.isInteger(hours) || hours < 1 || hours > 24) return;
+      setSavedFreeHours(hours);
+      try {
+          await postFreeHours({ freeHours: hours, Uid: userId });
+      } catch (e) {
+          console.error(e);
+      }
+      setFreeHours("");
   };
 
   const addTask = async () => {
@@ -135,19 +114,18 @@ export default function Index() {
   };
 
   const submitResult = async () => {
-    const num = Number(resultNumber);
-    const percent = typeof resultPercent === "number" ? resultPercent : Number(resultPercent);
-    if (!Number.isInteger(num) || num < 1) return;
-    if (!Number.isInteger(percent) || percent < 0 || percent > 100) return;
-    const payload = { id: `${Date.now()}`, number: num, percent };
-    try {
-      await postResult(payload);
-    } catch (e) {
-      console.error(e);
-      await submitTask(payload as any);
-    }
-    setResultNumber("");
-    setResultPercent("");
+      const num = Number(resultNumber);
+      const percent = typeof resultPercent === "number" ? resultPercent : Number(resultPercent);
+      if (!Number.isInteger(num) || num < 1) return;
+      if (!Number.isInteger(percent) || percent < 0 || percent > 100) return;
+      const payload = { Uid: userId, number: num, percent: percent };
+      try {
+          await postResult(payload);
+      } catch (e) {
+          console.error(e);
+      }
+      setResultNumber("");
+      setResultPercent("");
   };
 
   const container = "max-w-md mx-auto p-4 space-y-4";
@@ -199,16 +177,18 @@ export default function Index() {
             }`}
             style={{
               borderRadius: "30px",
-              overflow: "hidden",
+              overflowX: "hidden",
+              overflowY: "auto",
+              maxHeight: "320px",
               marginRight: "2px",
               width: "100%",
               padding: "8px 0 8px 7px",
               border: "1px solid rgba(75,45,36,0.06)",
             }}
           >
-            <ol className="text-left list-inside">
+            <ol className="text-left list-inside" style={{ paddingRight: 8 }}>
               {orderedTasks && orderedTasks.length > 0 ? (
-                orderedTasks.slice(0, 3).map((t, i) => {
+                orderedTasks.map((t, i) => {
                   const title = t.name || 'Без н��звания';
                   const dl = t.deadline || '-';
                   const complexity = (t as any).complexity || (typeof t.complexityHours === 'number' ? String(t.complexityHours) : (typeof t.hours === 'number' ? String(t.hours) : '-'));
@@ -216,8 +196,9 @@ export default function Index() {
                     <li key={t.id ?? i} className="py-2 text-base sm:text-lg" style={{ display: "flex", marginRight: "auto", flexDirection: "row", padding: "6px 0", alignItems: 'flex-start' }}>
                       <div style={{ fontFamily: "Roboto, Inter, system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial", width: 24, fontWeight: 600 }}>{i + 1}</div>
                       <div style={{ marginLeft: 8, alignSelf: "center", fontFamily: "Roboto, Inter, system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial", wordBreak: 'break-word', color: '#2b1f1f' }}>
-                        <div style={{ fontWeight: 600 }}>{title}</div>
-                        <div style={{ fontSize: 12, color: '#6b5a57', marginTop: 4 }}>{`Дедлайн: ${dl} • Сложность: ${complexity}`}</div>
+                        <div style={{ fontWeight: 600, color: '#2b1f1f' }}>{title}</div>
+                        <div style={{ fontSize: 13, color: '#4a2f2b', marginTop: 6, fontWeight: 500 }}>{`Дедлайн: ${dl}`}</div>
+                        <div style={{ fontSize: 13, color: '#4a2f2b', marginTop: 4, fontWeight: 400 }}>{`Сложность: ${complexity}`}</div>
                       </div>
                     </li>
                   );
@@ -407,7 +388,7 @@ export default function Index() {
             </div>
 
             <div className="w-full md:w-1/3 flex flex-col items-center">
-              <div className="mb-2" style={{ fontSize: "16px", fontWeight: "400", lineHeight: "22.5px", marginBottom: "8px", color: '#2b1f1f' }}>Дедлайн</div>
+              <div style={{ fontWeight: '400', lineHeight: '22.5px', marginBottom: '8px' }}><p>Дедлайн</p></div>
               <DatePicker
                 ariaLabel="Дедлайн"
                 value={newDeadline}
