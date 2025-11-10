@@ -25,3 +25,11 @@ logging:
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql: TRACE
     com.hack.botinki: DEBUG
+
+max:
+  bot: 
+    token: t424_hakaton_botf9LHodD0cOJ6Jy-WoRkcldBDgZ2cvifn3rvYs-UMKLvYF7v231WVWgyyUDcX3VIk99XqZKfTmw_1GyEtTpe3
+  api:
+    url: https://platform-api.max.ru
+  app:
+    url: https://your-mini-app-domain.com/app?user_id=
