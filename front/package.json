@@ -14,6 +14,7 @@
     "dev": "vite",
     "build": "vite build",
     "start": "node dist/server/node-build.mjs",
+    "serve": "vite preview",
     "test": "vitest --run",
     "format.fix": "prettier --write .",
     "typecheck": "tsc"

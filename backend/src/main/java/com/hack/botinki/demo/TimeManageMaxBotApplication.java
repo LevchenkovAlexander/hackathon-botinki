@@ -15,12 +15,4 @@ public class TimeManageMaxBotApplication {
     public static void main(String[] args) {
         SpringApplication.run(TimeManageMaxBotApplication.class, args);
     }
-    
-    @Bean
-    public RestTemplate restTemplate(RestTemplateBuilder builder) {
-        return builder
-            .setConnectTimeout(Duration.ofSeconds(30))
-            .setReadTimeout(Duration.ofSeconds(30))
-            .build();
-    }
 }

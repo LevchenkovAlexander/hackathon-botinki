@@ -1,10 +1,10 @@
-version: '3.8'
+version: '3.9'
 
 services:
   db:
-    image: postgres:16
+    image: postgres:16-alpine
     container_name: time_manage_db
-    restart: always
+    restart: unless-stopped
     environment:
       POSTGRES_DB: time_manage_db
       POSTGRES_USER: pupuser
@@ -14,35 +14,35 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/data
 
-  backend:
+  time-manage-max-bot:
     build: 
       context: ./backend
       dockerfile: Dockerfile
     container_name: time-manage-max-bot
-    restart: always
+    restart: unless-stopped
     depends_on:
       - db
     ports:
-      - "25251:25251"
+      - "8080:8080"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/time_manage_db
-      SPRING_DATASOURCE_USERNAME: pupuser
-      SPRING_DATASOURCE_PASSWORD: botinki
-      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://db:5432/time_manage_db"
+      SPRING_DATASOURCE_USERNAME: "pupuser"
+      SPRING_DATASOURCE_PASSWORD: "botinki"
+      SPRING_JPA_HIBERNATE_DDL_AUTO: "update"
 
-  frontend:
+  time-manage-max-front:
     build:
       context: ./front
       dockerfile: Dockerfile
     container_name: time-manage-max-front
     ports:
-      - "3000:3000"
+      - "3000:80"
     environment:
       - CHOKIDAR_USEPOLLING=true
     stdin_open: true
     tty: true
     depends_on:
-      - backend
+      - time-manage-max-bot
 
 volumes:
   db_data:
