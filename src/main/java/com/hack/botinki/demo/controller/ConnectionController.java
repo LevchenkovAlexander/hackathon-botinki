@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.Slf4j;
 
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -36,13 +37,13 @@ public class ConnectionController {
     public ResponseEntity<GenerateOrderResponse> generateOrder(@RequestBody GenerateOrderRequest request) {
         
         try {
-            
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
             Long Uid = request.getUid();
             long[] taskIds = modelService.execute(Uid);
             List<TaskTO> optimizedTasks = new ArrayList<>();
             for (long id : taskIds) {
             	Task task = taskService.getTask(id);
-            	TaskTO taskToList = new TaskTO(Uid, task.getName(), task.getDeadline().toString(), task.getComplexity());
+            	TaskTO taskToList = new TaskTO(Uid, task.getName(), task.getDeadline().format(formatter), task.getComplexity());
             	optimizedTasks.add(taskToList);
             }
             GenerateOrderResponse response = new GenerateOrderResponse();
