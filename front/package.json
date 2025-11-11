@@ -20,6 +20,7 @@
     "typecheck": "tsc"
   },
   "dependencies": {
+    "vite": "^7.2.2",
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
     "zod": "^3.25.76"
@@ -95,7 +96,6 @@
     "tsx": "^4.20.3",
     "typescript": "^5.9.2",
     "vaul": "^1.1.2",
-    "vite": "^7.2.2",
     "vitest": "^3.2.4"
   }
 }
