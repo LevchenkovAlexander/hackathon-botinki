@@ -7,5 +7,12 @@
         "distDir": "dist/spa"
       }
     }
+  ],
+
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
   ]
 }
