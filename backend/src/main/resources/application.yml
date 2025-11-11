@@ -18,7 +18,7 @@ spring:
         sessionFactoryInterface: org.hibernate.SessionFactory
 
 server:
-  port: 25251
+  port: 8080
 
 logging:
   level:
