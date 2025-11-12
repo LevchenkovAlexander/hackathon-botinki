@@ -28,7 +28,7 @@ logging:
 
 max:
   bot: 
-    token: my_token_bot
+    token: f9LHodD0cOJ6Jy-WoRkcldBDgZ2cvifn3rvYs-UMKLvYF7v231WVWgyyUDcX3VIk99XqZKfTmw_1GyEtTpe3
   api:
     url: https://platform-api.max.ru
   app:
